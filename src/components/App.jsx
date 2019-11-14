@@ -3,6 +3,7 @@ import { HashRouter as Router, Route, Switch } from 'react-router-dom';
 
 // Components
 import Help from './Help';
+import Wallet from './Wallet';
 import CreateAddress from './CreateAddress';
 import Spend from './Spend';
 import Navbar from './Navbar';
@@ -19,6 +20,7 @@ const App = () => (
       <ErrorBoundary>
         <Router>
           <Switch>
+            <Route path="/wallet" component={Wallet} />
             <Route path="/address" component={CreateAddress} />
             <Route path="/spend" component={Spend} />
             <Route path="/" component={Help} />
