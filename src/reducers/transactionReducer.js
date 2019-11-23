@@ -38,6 +38,8 @@ import {
   RESET_OUTPUTS,
 
   SET_TXID,
+
+  SET_IS_WALLET
 } from '../actions/transactionActions';
 
 function sortInputs(a, b) {
@@ -79,6 +81,7 @@ const initialState = {
   requiredSigners: 2,
   totalSigners: 3,
   unsignedTransaction: {},
+  isWallet: false,
 };
 
 function updateInputs(state, action) {
@@ -230,6 +233,14 @@ function updateOutputAmount(state, action) {
   const newOutputs = [...state.outputs];
   const amount = action.value;
   let error = state.inputs.length ? validateOutputAmountBTC(amount, state.inputsTotalSats) : "";
+
+  // this is a bit of a hack
+  // this error prevents from setting output amounts in the wellet
+  // a better proposal would be to update at the library level
+  // make seconde argument to validateOutputAmountBTC optional
+  // if not provided, supress error
+  if (state.isWallet && error === "Output amount is too large.") error = ""
+
   newOutputs[action.number - 1].amount = amount;
   newOutputs[action.number - 1].amountError = error;
   newOutputs[action.number - 1].amountSats = (error ? '' : bitcoinsToSatoshis(new BigNumber(action.value)));
@@ -297,6 +308,8 @@ export default (state = initialState, action) => {
     });
   case SET_TXID:
     return updateState(state, { txid: action.value });
+  case SET_IS_WALLET:
+    return updateState(state, { isWallet: true} );
   default:
     return state;
   }
