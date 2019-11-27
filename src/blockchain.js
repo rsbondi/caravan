@@ -2,11 +2,13 @@ import {
   blockExplorerGetAddresesUTXOs,
   blockExplorerGetFeeEstimate,
   blockExplorerBroadcastTransaction,
+  blockExplorerGetAddressStatus,
 } from "./block_explorer";
 import {
   bitcoindListUnspent,
   bitcoindEstimateSmartFee,
   bitcoindSendRawTransaction,
+  bitcoindGetAddtressStatus,
 } from "./bitcoind";
 
 export const BLOCK_EXPLORER = 'public';
@@ -23,6 +25,17 @@ export function fetchAddressUTXOs(address, network, client) {
     return blockExplorerGetAddresesUTXOs(address, network);
   } else {
     return bitcoindListUnspent({
+      ...bitcoindParams(client),
+      ...{address}
+    });
+  }
+}
+
+export function getAddressStatus(address, network, client) {
+  if (client.type === BLOCK_EXPLORER) {
+    return blockExplorerGetAddressStatus(address, network);
+  } else {
+    return bitcoindGetAddtressStatus({
       ...bitcoindParams(client),
       ...{address}
     });
