@@ -8,17 +8,12 @@ import {
   bitcoindListUnspent,
   bitcoindEstimateSmartFee,
   bitcoindSendRawTransaction,
-  bitcoindGetAddtressStatus,
+  bitcoindParams,
+  bitcoindGetAddressStatus,
 } from "./bitcoind";
 
 export const BLOCK_EXPLORER = 'public';
 export const BITCOIND = 'private';
-
-function bitcoindParams(client) {
-  const {url, username, password} = client;
-  const auth = { username, password };
-  return {url, auth};
-}
 
 export function fetchAddressUTXOs(address, network, client) {
   if (client.type === BLOCK_EXPLORER) {
@@ -35,7 +30,7 @@ export function getAddressStatus(address, network, client) {
   if (client.type === BLOCK_EXPLORER) {
     return blockExplorerGetAddressStatus(address, network);
   } else {
-    return bitcoindGetAddtressStatus({
+    return bitcoindGetAddressStatus({
       ...bitcoindParams(client),
       ...{address}
     });
