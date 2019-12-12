@@ -11,7 +11,6 @@ import {
   CardContent,
   FormControlLabel,
   TextField,
-  InputAdornment,
   Switch,
 } from '@material-ui/core';
 
@@ -128,23 +127,26 @@ class ClientPicker extends React.Component {
         <CardContent>
           {(client.type === 'public')
            ? (
-             <p>
-               {"'Public' uses the "}
-               <code>blockstream.info</code>
-               {' API. Switch to private to use a '}
-               <code>bitcoind</code>
-               {' node.'}
-             </p>
+             <div>
+              <p>
+                {"'Public' uses the "}
+                <code>blockstream.info</code>
+                {' API. Switch to private to use a '}
+                <code>bitcoind</code>
+                {' node.'}
+              </p>
+              {typeof this.props.publicNotes !== 'undefined' && this.props.publicNotes}
+             </div>
            ) : (
              <div>
-               <p>A <code>bitcoind</code>-compatible client is required to query UTXO data, estimate fees, and broadcast transactions.</p>
-               <p>
-                 <small>
-                   {'Due to CORS requirements, you must use a proxy around the node. Instructions are available '}
-                   {externalLink("https://github.com/unchained-capital/caravan#adding-cors-headers", "here")}
-                   {'.'}
-                 </small>
-               </p>
+              <p>A <code>bitcoind</code>-compatible client is required to query UTXO data, estimate fees, and broadcast transactions.</p>
+              <p>
+                <small>
+                  {'Due to CORS requirements, you must use a proxy around the node. Instructions are available '}
+                  {externalLink("https://github.com/unchained-capital/caravan#adding-cors-headers", "here")}
+                  {'.'}
+                </small>
+              </p>
                <form>
 
                  <Grid container direction="column">
@@ -158,9 +160,6 @@ class ClientPicker extends React.Component {
                        disabled={this.disabled()}
                        error={url_error !== ''}
                        helperText={url_error}
-                       InputProps={{
-                         startAdornment: <InputAdornment position="start"></InputAdornment>,
-                       }}
                      />
                    </Grid>
 
@@ -197,6 +196,7 @@ class ClientPicker extends React.Component {
                    </Grid>
                  </Grid>
                </form>
+               {typeof this.props.privateNotes !== 'undefined' && this.props.privateNotes}
              </div>
            )}
         </CardContent>
