@@ -11,7 +11,6 @@ import {
   CardContent,
   FormControlLabel,
   TextField,
-  InputAdornment,
   Switch,
 } from '@material-ui/core';
 
@@ -158,9 +157,6 @@ class ClientPicker extends React.Component {
                        disabled={this.disabled()}
                        error={url_error !== ''}
                        helperText={url_error}
-                       InputProps={{
-                         startAdornment: <InputAdornment position="start"></InputAdornment>,
-                       }}
                      />
                    </Grid>
 

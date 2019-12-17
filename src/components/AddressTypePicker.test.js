@@ -3,7 +3,8 @@ import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';
 import configureStore from 'redux-mock-store';
 import AddressTypePicker from './AddressTypePicker';
-const act = renderer.act;
+import { TestUtil } from './testCommon'
+
 
 import {
   P2SH,
@@ -14,59 +15,76 @@ import {
   setAddressType,
 } from '../actions/settingsActions';
 
+const act = renderer.act;
 const mockStore = configureStore([]);
+const util = new TestUtil(createComponentForStore, getStore)
+
 describe('Test AddressTypePicker component', () => {
-  let store;
-  let component;
 
   describe('Test rendering of component for a given state value', () => {
 
     it('should properly render for state of address type of P2SH', () => {
-      store = getStore(P2SH, false);
-      component = createComponentForStore(store);
-      const input = findInputForType(component, P2SH);
+      const { component } = util.createTestComponent({addressType: P2SH, frozen:false});
+
+      let input = util.findInputByProps(component, {value: P2SH});
       expect(input.checked).toEqual(true);
+
+      input = util.findInputByProps(component, {value: P2SH_P2WSH});
+      expect(input.checked).toEqual(false);
+
+      input = util.findInputByProps(component, {value: P2SH_P2WSH});
+      expect(input.checked).toEqual(false);
     });
 
     it('should properly render for state of address type of P2SH-P2WSH', () => {
-      store = getStore(P2SH_P2WSH, false);
-      component = createComponentForStore(store);
-      const input = findInputForType(component, P2SH_P2WSH);
+      const { component } = util.createTestComponent({addressType: P2SH_P2WSH, frozen:false});
+
+      let input = util.findInputByProps(component, {value: P2SH_P2WSH});
       expect(input.checked).toEqual(true);
+
+      input = util.findInputByProps(component, {value: P2SH});
+      expect(input.checked).toEqual(false);
+
+      input = util.findInputByProps(component, {value: P2WSH});
+      expect(input.checked).toEqual(false);
     });
 
     it('should properly render for state of address type of P2WSH', () => {
-      store = getStore(P2WSH, false);
-      component = createComponentForStore(store);
-      const input = findInputForType(component, P2WSH);
+      const { component } = util.createTestComponent({addressType: P2WSH, frozen:false});
+
+      let input = util.findInputByProps(component, {value: P2WSH});
       expect(input.checked).toEqual(true);
+
+      input = util.findInputByProps(component, {value: P2SH});
+      expect(input.checked).toEqual(false);
+
+      input = util.findInputByProps(component, {value: P2SH_P2WSH});
+      expect(input.checked).toEqual(false);
     });
 
     it('should properly render disabled for a state of frozen equal to true', () => {
-      store = getStore(P2SH, true);
-      component = createComponentForStore(store);
+      const { component } = util.createTestComponent({addressType: P2SH, frozen: true});
 
-      let input = findInputForType(component, P2SH);
+      let input = util.findInputByProps(component, {value: P2SH});
       expect(input.disabled).toEqual(true);
 
-      input = findInputForType(component, P2SH_P2WSH);
+      input = util.findInputByProps(component, {value: P2SH_P2WSH});
       expect(input.disabled).toEqual(true);
 
-      input = findInputForType(component, P2WSH);
+      input = util.findInputByProps(component, {value: P2WSH});
       expect(input.disabled).toEqual(true);
     });
 
     it('should properly render enabled for a state of frozen equal to false', () => {
-      store = getStore(P2SH, false);
-      component = createComponentForStore(store);
+      const { component } = util.createTestComponent({addressType: P2SH, frozen: false});
 
-      let input = findInputForType(component, P2SH);
+      let input = util.findInputByProps(component, {value: P2SH});
       expect(input.disabled).toEqual(false);
 
-      input = findInputForType(component, P2SH_P2WSH);
+      input = util.findInputByProps(component, {value: P2SH_P2WSH});
       expect(input.disabled).toEqual(false);
 
-      input = findInputForType(component, P2WSH);
+      input = util.findInputByProps(component, {value: P2WSH});
       expect(input.disabled).toEqual(false);
     });
   });
@@ -74,48 +92,36 @@ describe('Test AddressTypePicker component', () => {
   describe('Test proper dispatch of component actions', () => {
 
     it('should properly dispatch message for selecting address type of P2SH', () => {
-      store = getStore(P2SH, false);
-      store.dispatch = jest.fn();
-      component = createComponentForStore(store);
-      const input = findInputForType(component, P2SH);
+      const { component, store } = util.createTestComponent({addressType: P2SH, frozen: false});
+      const input = util.findInputByProps(component, {value: P2SH});
       act(() => {
-        input.onChange({ target: { value: P2SH } })
+        input.onChange({ target: { value: input.value } });
+        expect(store.dispatch).toHaveBeenCalledTimes(1);
+        expect(store.dispatch).toHaveBeenCalledWith(setAddressType(P2SH));
       });
 
-      expect(store.dispatch).toHaveBeenCalledTimes(1);
-      act(() => {
-        expect(store.dispatch).toHaveBeenCalledWith(setAddressType(P2SH))
-      });
     });
 
     it('should properly dispatch message for selecting address type of P2SH-P2WSH', () => {
-      store = getStore(P2SH_P2WSH, false);
-      store.dispatch = jest.fn();
-      component = createComponentForStore(store);
-      const input = findInputForType(component, P2SH_P2WSH);
+      const { component, store } = util.createTestComponent({addressType: P2SH_P2WSH, frozen:false});
+      const input = util.findInputByProps(component, {value: P2SH_P2WSH});
       act(() => {
-        input.onChange({ target: { value: P2SH_P2WSH } })
+        input.onChange({ target: { value: input.value } });
+        expect(store.dispatch).toHaveBeenCalledTimes(1);
+        expect(store.dispatch).toHaveBeenCalledWith(setAddressType(P2SH_P2WSH));
       });
 
-      expect(store.dispatch).toHaveBeenCalledTimes(1);
-      act(() => {
-        expect(store.dispatch).toHaveBeenCalledWith(setAddressType(P2SH_P2WSH))
-      });
     });
 
     it('should properly dispatch message for selecting address type of P2WSH', () => {
-      store = getStore(P2WSH, false);
-      store.dispatch = jest.fn();
-      component = createComponentForStore(store);
-      const input = findInputForType(component, P2WSH);
+      const { component, store } = util.createTestComponent({addressType: P2WSH, frozen:false});
+      const input = util.findInputByProps(component, {value: P2WSH});
       act(() => {
-        input.onChange({ target: { value: P2WSH } })
+        input.onChange({ target: { value: input.value } });
+        expect(store.dispatch).toHaveBeenCalledTimes(1);
+        expect(store.dispatch).toHaveBeenCalledWith(setAddressType(P2WSH));
       });
 
-      expect(store.dispatch).toHaveBeenCalledTimes(1);
-      act(() => {
-        expect(store.dispatch).toHaveBeenCalledWith(setAddressType(P2WSH))
-      });
     });
 
   });
@@ -130,17 +136,11 @@ function createComponentForStore(store) {
   );
 }
 
-function findInputForType(component, addressType) {
-  return component.root.findAllByType('input')
-    .map(inp => inp.props)
-    .filter(inp => inp.value === addressType)[0];
-}
-
-function getStore(addressType, frozen) {
+function getStore(opts) {
   return mockStore({
     settings: {
-      addressType: addressType,
-      frozen: frozen,
+      addressType: opts.addressType,
+      frozen: opts.frozen,
     }
   });
 }

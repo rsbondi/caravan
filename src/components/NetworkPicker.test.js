@@ -3,7 +3,8 @@ import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';
 import configureStore from 'redux-mock-store';
 import NetworkPicker from './NetworkPicker';
-const act = renderer.act;
+import { TestUtil } from './testCommon'
+
 
 import {
   TESTNET,
@@ -13,47 +14,42 @@ import {
   setNetwork,
 } from '../actions/settingsActions';
 
+const act = renderer.act;
 const mockStore = configureStore([]);
+const util = new TestUtil(createComponentForStore, getStore)
+
 describe('Test NetworkPicker component', () => {
-  let store;
-  let component;
 
   describe('Test rendering of component for a given state value', () => {
 
     it('should properly render for state of network type of mainnet', () => {
-      store = getStore(MAINNET, false);
-      component = createComponentForStore(store);
-      const input = findInputForType(component, MAINNET);
+      const { component } = util.createTestComponent({network: MAINNET, frozen:false});
+      const input = util.findInputByProps(component, {value: MAINNET});
       expect(input.checked).toEqual(true);
     });
 
     it('should properly render for state of network type of testnet', () => {
-      store = getStore(TESTNET, false);
-      component = createComponentForStore(store);
-      const input = findInputForType(component, TESTNET);
+      const { component } = util.createTestComponent({network: TESTNET, frozen:false});
+      const input = util.findInputByProps(component, {value: TESTNET});
       expect(input.checked).toEqual(true);
     });
 
 
     it('should properly render enabled for a state of frozen equal to false', () => {
-      store = getStore(MAINNET, false);
-      component = createComponentForStore(store);
-
-      let input = findInputForType(component, MAINNET);
+      const { component } = util.createTestComponent({network: MAINNET, frozen:false});
+      let input = util.findInputByProps(component, {value: MAINNET});
       expect(input.disabled).toEqual(false);
 
-      input = findInputForType(component, TESTNET);
+      input = util.findInputByProps(component, {value: TESTNET});
       expect(input.disabled).toEqual(false);
     });
 
     it('should properly render disabled for a state of frozen equal to true', () => {
-      store = getStore(MAINNET, true);
-      component = createComponentForStore(store);
-
-      let input = findInputForType(component, MAINNET);
+      const { component } = util.createTestComponent({network: MAINNET, frozen:true});
+      let input = util.findInputByProps(component, {value: MAINNET});
       expect(input.disabled).toEqual(true);
 
-      input = findInputForType(component, TESTNET);
+      input = util.findInputByProps(component, {value: TESTNET});
       expect(input.disabled).toEqual(true);
     });
 
@@ -62,12 +58,10 @@ describe('Test NetworkPicker component', () => {
   describe('Test proper dispatch of component actions', () => {
 
     it('should properly dispatch message for selecting network type of mainnet', () => {
-      store = getStore(MAINNET, false);
-      store.dispatch = jest.fn();
-      component = createComponentForStore(store);
-      const input = findInputForType(component, MAINNET);
+      const { component, store } = util.createTestComponent({network: MAINNET, frozen: false});
+      const input = util.findInputByProps(component, {value: MAINNET});
       act(() => {
-        input.onChange({ target: { value: MAINNET } })
+        input.onChange({ target: { value: input.value } })
       });
 
       expect(store.dispatch).toHaveBeenCalledTimes(1);
@@ -77,12 +71,10 @@ describe('Test NetworkPicker component', () => {
     });
 
     it('should properly dispatch message for selecting network type of testnet', () => {
-      store = getStore(TESTNET, false);
-      store.dispatch = jest.fn();
-      component = createComponentForStore(store);
-      const input = findInputForType(component, TESTNET);
+      const { component, store } = util.createTestComponent({network: TESTNET, frozen: false});
+      const input = util.findInputByProps(component, {value: TESTNET});
       act(() => {
-        input.onChange({ target: { value: TESTNET } })
+        input.onChange({ target: { value: input.value } })
       });
 
       expect(store.dispatch).toHaveBeenCalledTimes(1);
@@ -103,17 +95,11 @@ function createComponentForStore(store) {
   );
 }
 
-function findInputForType(component, network) {
-  return component.root.findAllByType('input')
-    .map(inp => inp.props)
-    .filter(inp => inp.value === network)[0];
-}
-
-function getStore(network, frozen) {
+function getStore(opts) {
   return mockStore({
     settings: {
-      network: network,
-      frozen: frozen,
+      network: opts.network,
+      frozen: opts.frozen,
     }
   });
 }
