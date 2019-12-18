@@ -1,5 +1,5 @@
 import {
-  MAINNET, 
+  MAINNET,
   P2SH,
   multisigBIP32Path,
 } from "unchained-bitcoin";
@@ -41,7 +41,7 @@ const initialPublicKeyImporterState = {
   conflict: false,
 };
 
-const initialState = {
+export const initialState = {
   publicKeyImporters: {
     1: { ...initialPublicKeyImporterState, ...{name: "Public Key 1"} },
     2: { ...initialPublicKeyImporterState, ...{name: "Public Key 2"} },
@@ -114,7 +114,7 @@ function updateTotalSigners(state, action) {
   const publicKeyImporters = {};
   for (let publicKeyImporterNum = 1; publicKeyImporterNum <= totalSigners; publicKeyImporterNum++) {
     publicKeyImporters[publicKeyImporterNum] = state.publicKeyImporters[publicKeyImporterNum] || {
-      ...initialPublicKeyImporterState, 
+      ...initialPublicKeyImporterState,
       ...{
         name: `Public Key ${publicKeyImporterNum}`,
       },
