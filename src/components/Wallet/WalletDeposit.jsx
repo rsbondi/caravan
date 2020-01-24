@@ -19,6 +19,7 @@ import {
   Button,
   Box,
 } from '@material-ui/core';
+import AddressExpander from "./AddressExpander";
 
 let depositTimer;
 
@@ -30,6 +31,7 @@ class WalletDeposit extends React.Component {
     amountError: "",
     showReceived: false,
     depositIndex: 0,
+    node: null,
   }
 
   static propTypes = {
@@ -72,7 +74,7 @@ class WalletDeposit extends React.Component {
     const { depositIndex } = this.state;
     const depositableNodes = this.getDepositableNodes();
     if (depositIndex < depositableNodes.length)
-      this.setState({address: depositableNodes[depositIndex].multisig.address, bip32Path: depositableNodes[depositIndex].bip32Path, showReceived: false});
+      this.setState({node: depositableNodes[depositIndex], address: depositableNodes[depositIndex].multisig.address, bip32Path: depositableNodes[depositIndex].bip32Path, showReceived: false});
 
     clearInterval(depositTimer);
     depositTimer = setInterval(async () => {
@@ -103,15 +105,19 @@ class WalletDeposit extends React.Component {
     }, 2000)
   }
 
+  renderAddress = () => {
+    return this.state.node ? <AddressExpander node={this.state.node} /> : ""
+  }
+
   render() {
-    const { amount, amountError, address, showReceived } = this.state;
+    const { amount, amountError, showReceived } = this.state;
     return (
       <div>
         <Card>
           <CardHeader title="Deposit"/>
           <CardContent>
             <Copyable text={this.qrString()} newline={true}>
-              <p><code>{address}</code></p>
+              {this.renderAddress()}
               <QRCode size={300} value={this.qrString()} level={'L'} />
               <p>Scan QR code or click to copy address to clipboard.</p>
             </Copyable>
@@ -145,9 +151,15 @@ class WalletDeposit extends React.Component {
 
   renderReceived = () => {
     const { resetWalletView } = this.props;
+    const { depositIndex } = this.state;
       return (
         <Box mt={2}>
-          <Button variant="contained" color="primary" onClick={this.getNextDepositAddress}>Next Address</Button>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.getNextDepositAddress}
+            disabled={depositIndex >= this.getDepositableNodes().length - 1}
+          >Next Address</Button>
           <Box ml={2} component="span">
             <Button variant="contained" onClick={resetWalletView}>Return</Button>
           </Box>
