@@ -8,15 +8,15 @@ self.__precacheManifest = [
     "url": "/caravan/static/js/runtime~main.731ca210.js"
   },
   {
-    "revision": "996ff7df16ab3749b142",
-    "url": "/caravan/static/js/main.31722883.chunk.js"
+    "revision": "37205f32ce13265be877",
+    "url": "/caravan/static/js/main.56f21444.chunk.js"
   },
   {
     "revision": "df2640303941223ed244",
     "url": "/caravan/static/js/2.ee42980a.chunk.js"
   },
   {
-    "revision": "996ff7df16ab3749b142",
+    "revision": "37205f32ce13265be877",
     "url": "/caravan/static/css/main.0565db24.chunk.css"
   },
   {
@@ -24,7 +24,7 @@ self.__precacheManifest = [
     "url": "/caravan/static/css/2.57fe0083.chunk.css"
   },
   {
-    "revision": "c46d2c4bb551d11ae43d26681f112b01",
+    "revision": "58b799fa7de0f24a8665ecfe54ee4189",
     "url": "/caravan/index.html"
   }
 ];
